@@ -6,47 +6,51 @@
 
 <style>
 body {
-  background: white;
-  color: #6b7280;
+  background: #1e1e1e;
+  color: #ccc;
   font-family: monospace;
   padding: 40px;
-  text-align: center;
 }
 
+/* caixa do texto */
 #container {
+  background: #2a2a2a;
+  padding: 20px;
+  border-radius: 10px;
   max-width: 800px;
   margin: auto;
   line-height: 1.8;
-  font-size: 26px;
+  font-size: 22px;
 }
 
+/* letras */
 .letra {
-  color: #6b7280;
+  color: #777;
 }
 
 .correta {
-  color: #2563eb;
+  color: #3b82f6; /* azul */
 }
 
 .errada {
-  color: #2563eb;
-  border-bottom: 2px solid #2563eb;
+  color: #ef4444; /* vermelho */
 }
 
 .ativa {
-  border-bottom: 2px solid #2563eb;
+  border-bottom: 2px solid #3b82f6;
 }
 
-#texto {
-  border-bottom: 1px solid #d1d5db;
-  padding-bottom: 10px;
-  min-height: 40px;
+/* input invisível */
+#input {
+  opacity: 0;
+  position: absolute;
 }
 
+/* resultado */
 #resultado {
-  margin-top: 20px;
+  text-align: center;
+  margin-top: 30px;
   font-size: 20px;
-  color: #2563eb;
 }
 </style>
 
@@ -56,122 +60,96 @@ body {
 
 <div id="container">
   <div id="texto"></div>
-  <div id="resultado"></div>
 </div>
 
-<audio id="som" src="https://assets.mixkit.co/sfx/preview/mixkit-typewriter-soft-click-1125.mp3"></audio>
+<input type="text" id="input" autofocus>
+
+<div id="resultado"></div>
 
 <script>
-const intro = "o site está sendo testado. por favor tenha paciência e sente-se porque o jogo vai ficar mais interessante";
-const fraseJogo = "o site está sendo testado";
+const textoOriginal = `In today's increasingly hectic and stressful world, getting a spa treatment is sometimes one of the most therapeutic things an individual can enjoy. The relaxation and peaceful environment associated with a spa can allow a person to regain their sense of balance.`;
 
 const textoDiv = document.getElementById("texto");
-const resultadoDiv = document.getElementById("resultado");
-const som = document.getElementById("som");
+const input = document.getElementById("input");
+const resultado = document.getElementById("resultado");
 
-let liberado = false;
-
-// desbloquear áudio
-document.body.addEventListener("click", () => {
-  som.play().then(() => {
-    som.pause();
-    som.currentTime = 0;
-    liberado = true;
-  });
-}, { once: true });
-
-// ================= INTRO =================
-let i = 0;
-
-function digitarIntro() {
-  if (i < intro.length) {
-    const span = document.createElement("span");
-    span.innerText = intro[i];
-    span.classList.add("letra");
-    textoDiv.appendChild(span);
-
-    if (liberado) {
-      som.currentTime = 0;
-      som.play();
-    }
-
-    i++;
-    setTimeout(digitarIntro, 70);
-  } else {
-    setTimeout(iniciarJogo, 1000);
-  }
-}
-
-// ================= JOGO =================
-let index = 0;
-let erros = 0;
 let inicio = null;
+let erros = 0;
 
-function iniciarJogo() {
-  textoDiv.innerHTML = "";
-  resultadoDiv.innerHTML = "";
+// criar letras
+textoOriginal.split("").forEach((letra, index) => {
+  const span = document.createElement("span");
+  span.innerText = letra;
+  span.classList.add("letra");
 
-  fraseJogo.split("").forEach(letra => {
-    const span = document.createElement("span");
-    span.innerText = letra;
-    span.classList.add("letra");
-    textoDiv.appendChild(span);
-  });
+  if (index === 0) span.classList.add("ativa");
 
-  textoDiv.children[0].classList.add("ativa");
+  textoDiv.appendChild(span);
+});
 
-  document.addEventListener("keydown", digitar);
-}
+const letras = document.querySelectorAll(".letra");
 
-function digitar(e) {
+// focar automaticamente
+document.body.addEventListener("click", () => input.focus());
+
+input.addEventListener("input", () => {
+
   if (!inicio) inicio = new Date();
 
-  const letras = textoDiv.querySelectorAll("span");
-  const letraAtual = letras[index];
+  const valor = input.value;
+  erros = 0;
 
-  if (!letraAtual) return;
+  letras.forEach((span, index) => {
+    const letraDigitada = valor[index];
 
-  if (liberado) {
-    som.currentTime = 0;
-    som.play();
+    span.classList.remove("ativa");
+
+    if (letraDigitada == null) {
+      span.classList.remove("correta", "errada");
+    } 
+    else if (letraDigitada === span.innerText) {
+      span.classList.add("correta");
+      span.classList.remove("errada");
+    } 
+    else {
+      span.classList.add("errada");
+      span.classList.remove("correta");
+      erros++;
+    }
+
+    if (index === valor.length) {
+      span.classList.add("ativa");
+    }
+  });
+
+  // terminou (mesmo com erro)
+  if (valor.length >= textoOriginal.length) {
+    finalizar(valor);
   }
+});
 
-  if (e.key === letraAtual.innerText) {
-    letraAtual.classList.add("correta");
-  } else {
-    letraAtual.classList.add("errada");
-    erros++;
-  }
-
-  letraAtual.classList.remove("ativa");
-  index++;
-
-  if (letras[index]) {
-    letras[index].classList.add("ativa");
-  } else {
-    finalizar();
-  }
-}
-
-// ================= RESULTADO =================
-function finalizar() {
+function finalizar(valor) {
   const fim = new Date();
   const tempo = (fim - inicio) / 1000;
 
-  const palavras = fraseJogo.split(" ").length;
-  const wpm = Math.round((palavras / tempo) * 60);
-  const precisao = Math.round(((fraseJogo.length - erros) / fraseJogo.length) * 100);
+  const totalCaracteres = textoOriginal.length;
+  const acertos = totalCaracteres - erros;
+  const precisao = (acertos / totalCaracteres) * 100;
 
-  resultadoDiv.innerHTML = `
-    ⏱ Tempo: ${tempo.toFixed(1)}s <br>
+  const palavras = textoOriginal.split(" ").length;
+  const wpm = Math.round((palavras / tempo) * 60);
+
+  resultado.innerHTML = `
+    🎉 Finalizado! <br><br>
+    ⏱️ Tempo: ${tempo.toFixed(2)}s <br>
     ⚡ Velocidade: ${wpm} WPM <br>
     ❌ Erros: ${erros} <br>
-    🎯 Precisão: ${precisao}%
+    🎯 Precisão: ${precisao.toFixed(1)}% <br><br>
+    💙 você terminou... mesmo com erros 😏
   `;
-}
 
-// iniciar intro
-digitarIntro();
+  input.disabled = true;
+}
 </script>
 
 </body>

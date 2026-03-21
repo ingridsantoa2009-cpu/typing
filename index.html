@@ -8,18 +8,19 @@
 body {
   background: #ffffff;
   color: #333;
-  font-family: monospace;
+  font-family: "Segoe UI", Arial, sans-serif;
   margin: 0;
 }
 
-/* barra superior */
+/* barra estilo typing.com */
 #topo {
-  background: #bfdbfe;
-  color: #1e3a8a;
+  background: linear-gradient(to right, #2ea3c9, #1e7fa3);
+  color: white;
   text-align: center;
   padding: 15px;
-  font-size: 18px;
-  font-weight: bold;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 /* caixa do texto */
@@ -31,6 +32,7 @@ body {
   margin: 40px auto 20px auto;
   line-height: 2.2;
   font-size: 32px;
+  font-family: monospace;
 }
 
 /* letras */
@@ -68,6 +70,7 @@ body {
   font-size: 20px;
   line-height: 1.8;
   display: none;
+  text-align: center;
 }
 </style>
 
@@ -151,19 +154,12 @@ function finalizar(valor) {
 
   let erros = 0;
   let caracteresCorretos = 0;
-  let listaErros = [];
 
-  letras.forEach((span, index) => {
-    if (span.classList.contains("errada")) {
-      erros++;
-      listaErros.push(`"${textoOriginal[index]}"`);
-    }
-    if (span.classList.contains("correta")) {
-      caracteresCorretos++;
-    }
+  letras.forEach((span) => {
+    if (span.classList.contains("errada")) erros++;
+    if (span.classList.contains("correta")) caracteresCorretos++;
   });
 
-  // velocidade REAL (padrão profissional)
   const wpm = Math.round(((caracteresCorretos / 5) / tempo) * 60);
 
   resultado.style.display = "block";
@@ -172,8 +168,7 @@ function finalizar(valor) {
     🎉 <b>RESULTADO</b><br><br>
     ⏱️ Tempo: ${tempo.toFixed(2)}s <br>
     ⚡ Velocidade média: ${wpm} WPM <br>
-    ❌ Total de erros: ${erros} <br>
-    🔎 Caracteres errados: ${listaErros.join(", ") || "Nenhum 😎"} <br><br>
+    ❌ Total de erros: ${erros} <br><br>
     💙 você terminou... do seu jeito 😏
   `;
 

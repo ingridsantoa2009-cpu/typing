@@ -22,8 +22,9 @@ body {
   font-weight: 600;
 }
 
-/* container geral */
+/* container */
 #container {
+  position: relative;
   background: #e5e7eb;
   padding: 40px;
   border-radius: 15px;
@@ -31,14 +32,28 @@ body {
   margin: 40px auto 20px auto;
   font-size: 32px;
   font-family: monospace;
+  line-height: 2.2;
+  overflow: hidden;
 }
 
-/* LINHAS (isso resolve tudo) */
-.linha {
-  border-bottom: 1px solid #d1d5db;
-  padding-bottom: 5px;
-  margin-bottom: 10px;
-  line-height: 2.2;
+/* LINHAS (overlay sem quebrar texto) */
+#container::after {
+  content: "";
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  right: 40px;
+  bottom: 40px;
+  pointer-events: none;
+
+  background-image: linear-gradient(#d1d5db 1px, transparent 1px);
+  background-size: 100% 2.2em;
+}
+
+/* texto */
+#texto {
+  position: relative;
+  z-index: 1;
 }
 
 /* letras */
@@ -104,45 +119,15 @@ const resultado = document.getElementById("resultado");
 
 let inicio = null;
 
-// 👉 QUEBRA EM LINHAS
-function dividirLinhas(texto, tamanho = 50) {
-  const palavras = texto.split(" ");
-  let linhas = [];
-  let atual = "";
+// criar letras (sem quebrar linha artificial)
+textoOriginal.split("").forEach((letra, index) => {
+  const span = document.createElement("span");
+  span.innerText = letra;
+  span.classList.add("letra");
 
-  palavras.forEach(p => {
-    if ((atual + p).length > tamanho) {
-      linhas.push(atual);
-      atual = p + " ";
-    } else {
-      atual += p + " ";
-    }
-  });
+  if (index === 0) span.classList.add("ativa");
 
-  linhas.push(atual);
-  return linhas;
-}
-
-// criar linhas + letras
-const linhas = dividirLinhas(textoOriginal);
-
-linhas.forEach((linhaTexto, linhaIndex) => {
-  const divLinha = document.createElement("div");
-  divLinha.classList.add("linha");
-
-  linhaTexto.split("").forEach((letra, index) => {
-    const span = document.createElement("span");
-    span.innerText = letra;
-    span.classList.add("letra");
-
-    if (linhaIndex === 0 && index === 0) {
-      span.classList.add("ativa");
-    }
-
-    divLinha.appendChild(span);
-  });
-
-  textoDiv.appendChild(divLinha);
+  textoDiv.appendChild(span);
 });
 
 const letras = document.querySelectorAll(".letra");

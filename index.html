@@ -6,26 +6,27 @@
 
 <style>
 body {
-  background: #1e1e1e;
-  color: #ccc;
+  background: #ffffff; /* fundo branco */
+  color: #333;
   font-family: monospace;
   padding: 40px;
 }
 
 /* caixa do texto */
 #container {
-  background: #2a2a2a;
-  padding: 20px;
-  border-radius: 10px;
-  max-width: 800px;
+  background: #f3f3f3;
+  padding: 40px; /* aumentei */
+  border-radius: 15px;
+  max-width: 1000px; /* maior */
   margin: auto;
-  line-height: 1.8;
-  font-size: 22px;
+  line-height: 2.2; /* mais espaçamento */
+  font-size: 32px; /* letras maiores */
 }
 
 /* letras */
 .letra {
-  color: #777;
+  color: #999;
+  margin-right: 2px; /* espaço entre letras */
 }
 
 .correta {
@@ -37,7 +38,7 @@ body {
 }
 
 .ativa {
-  border-bottom: 2px solid #3b82f6;
+  border-bottom: 2px solid #3b82f6; /* NÃO ALTERADO */
 }
 
 /* input invisível */
@@ -50,7 +51,7 @@ body {
 #resultado {
   text-align: center;
   margin-top: 30px;
-  font-size: 20px;
+  font-size: 24px; /* maior */
 }
 </style>
 
@@ -67,7 +68,7 @@ body {
 <div id="resultado"></div>
 
 <script>
-const textoOriginal = `In today's increasingly hectic and stressful world, getting a spa treatment is sometimes one of the most therapeutic things an individual can enjoy. The relaxation and peaceful environment associated with a spa can allow a person to regain their sense of balance.`;
+const textoOriginal = `aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`;
 
 const textoDiv = document.getElementById("texto");
 const input = document.getElementById("input");

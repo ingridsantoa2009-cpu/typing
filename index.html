@@ -12,7 +12,7 @@ body {
   margin: 0;
 }
 
-/* barra estilo typing.com */
+/* barra topo */
 #topo {
   background: linear-gradient(to right, #2ea3c9, #1e7fa3);
   color: white;
@@ -20,7 +20,6 @@ body {
   padding: 15px;
   font-size: 20px;
   font-weight: 600;
-  letter-spacing: 0.5px;
 }
 
 /* caixa do texto */
@@ -30,22 +29,18 @@ body {
   border-radius: 15px;
   max-width: 1000px;
   margin: 40px auto 20px auto;
-  line-height: 2.2;
   font-size: 32px;
   font-family: monospace;
+  line-height: 2.2;
 
-  /* 👇 ISSO AQUI CRIA AS LINHAS */
- .letra {
-  color: #999;
-  margin-right: 2px;
-  display: inline-block;
-  border-bottom: 1px solid #d1d5db; /* linha */
+  /* linhas perfeitas */
+  background-image: linear-gradient(#d1d5db 1px, transparent 1px);
+  background-size: 100% 2.2em;
 }
 
 /* letras */
 .letra {
   color: #999;
-  margin-right: 2px;
 }
 
 .correta {
@@ -66,7 +61,7 @@ body {
   position: absolute;
 }
 
-/* relatório */
+/* resultado */
 #resultado {
   background: #bfdbfe;
   color: #1e3a8a;
@@ -98,7 +93,7 @@ SEJA BEM VINDO À MAIS UMA TENTATIVA DE FAZER O TÉO SE SENTIR ESPECIAL!
 <div id="resultado"></div>
 
 <script>
-const textoOriginal = `Hoje é um dia lindo. Eu gosto de estudar e aprender coisas novas. Esse site está ficando muito legal!`;
+const textoOriginal = `In today's increasingly hectic and stressful world, getting a spa treatment is sometimes one of the most therapeutic things an individual can enjoy. The relaxation and peaceful environment associated with a spa can allow a person to regain their sense of balance.`;
 
 const textoDiv = document.getElementById("texto");
 const input = document.getElementById("input");

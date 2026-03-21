@@ -6,75 +6,51 @@
 
 <style>
 body {
-  background: #0f172a;
-  color: #e2e8f0;
-  font-family: Arial;
-  text-align: center;
-  padding: 30px;
+  background: #1e1e1e;
+  color: #ccc;
+  font-family: monospace;
+  padding: 40px;
 }
 
-h1 {
-  margin-bottom: 10px;
-}
-
-#info {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-bottom: 10px;
-}
-
-#texto {
-  max-width: 700px;
-  margin: 20px auto;
+/* caixa do texto */
+#container {
+  background: #2a2a2a;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 800px;
+  margin: auto;
+  line-height: 1.8;
   font-size: 22px;
-  line-height: 1.6;
 }
 
+/* letras */
 .letra {
-  color: #64748b;
+  color: #777;
 }
 
 .correta {
-  color: #22c55e;
+  color: #3b82f6; /* azul */
 }
 
 .errada {
-  color: #ef4444;
+  color: #ef4444; /* vermelho */
 }
 
 .ativa {
-  border-bottom: 2px solid white;
+  border-bottom: 2px solid #3b82f6;
 }
 
-input {
-  width: 70%;
-  padding: 10px;
-  font-size: 18px;
-  border-radius: 6px;
-  border: none;
-  margin-top: 20px;
+/* input invisível */
+#input {
+  opacity: 0;
+  position: absolute;
 }
 
+/* resultado */
 #resultado {
-  margin-top: 20px;
+  text-align: center;
+  margin-top: 30px;
   font-size: 20px;
-}
-
-#progresso-container {
-  width: 70%;
-  height: 8px;
-  background: #1e293b;
-  margin: 10px auto;
-  border-radius: 5px;
-}
-
-#progresso {
-  height: 100%;
-  width: 0%;
-  background: #22c55e;
-  border-radius: 5px;
-  transition: 0.2s;
 }
 </style>
 
@@ -82,40 +58,22 @@ input {
 
 <body>
 
-<h1>💻 Teste de Digitação</h1>
-
-<div id="info">
-  <span>⏱️ Tempo: <span id="tempo">0.0</span>s</span>
-  <span>⚡ WPM: <span id="wpm">0</span></span>
-  <span>🎯 Precisão: <span id="precisao">100</span>%</span>
+<div id="container">
+  <div id="texto"></div>
 </div>
 
-<div id="progresso-container">
-  <div id="progresso"></div>
-</div>
-
-<div id="texto"></div>
-
-<input type="text" id="input" placeholder="Comece a digitar..." autofocus>
+<input type="text" id="input" autofocus>
 
 <div id="resultado"></div>
 
-<audio id="som" src="https://www.soundjay.com/mechanical/keyboard-1.mp3"></audio>
-
 <script>
-const textoOriginal = "você é especial e talvez não saiba o quanto isso significa pra mim";
-const textoContainer = document.getElementById("texto");
-const input = document.getElementById("input");
+const textoOriginal = `In today's increasingly hectic and stressful world, getting a spa treatment is sometimes one of the most therapeutic things an individual can enjoy. The relaxation and peaceful environment associated with a spa can allow a person to regain their sense of balance.`;
 
-const tempoEl = document.getElementById("tempo");
-const wpmEl = document.getElementById("wpm");
-const precisaoEl = document.getElementById("precisao");
+const textoDiv = document.getElementById("texto");
+const input = document.getElementById("input");
 const resultado = document.getElementById("resultado");
-const progresso = document.getElementById("progresso");
-const som = document.getElementById("som");
 
 let inicio = null;
-let intervalo;
 let erros = 0;
 
 // criar letras
@@ -123,21 +81,20 @@ textoOriginal.split("").forEach((letra, index) => {
   const span = document.createElement("span");
   span.innerText = letra;
   span.classList.add("letra");
-  if(index === 0) span.classList.add("ativa");
-  textoContainer.appendChild(span);
+
+  if (index === 0) span.classList.add("ativa");
+
+  textoDiv.appendChild(span);
 });
 
 const letras = document.querySelectorAll(".letra");
 
+// focar automaticamente
+document.body.addEventListener("click", () => input.focus());
+
 input.addEventListener("input", () => {
 
-  if (!inicio) {
-    inicio = new Date();
-    intervalo = setInterval(atualizarTempo, 100);
-  }
-
-  som.currentTime = 0;
-  som.play();
+  if (!inicio) inicio = new Date();
 
   const valor = input.value;
   erros = 0;
@@ -149,59 +106,49 @@ input.addEventListener("input", () => {
 
     if (letraDigitada == null) {
       span.classList.remove("correta", "errada");
-    } else if (letraDigitada === span.innerText) {
+    } 
+    else if (letraDigitada === span.innerText) {
       span.classList.add("correta");
       span.classList.remove("errada");
-    } else {
+    } 
+    else {
       span.classList.add("errada");
       span.classList.remove("correta");
       erros++;
     }
 
-    if(index === valor.length) {
+    if (index === valor.length) {
       span.classList.add("ativa");
     }
   });
 
-  // progresso
-  const progressoValor = (valor.length / textoOriginal.length) * 100;
-  progresso.style.width = progressoValor + "%";
-
-  // precisão
-  const precisao = ((valor.length - erros) / valor.length) * 100 || 100;
-  precisaoEl.innerText = Math.round(precisao);
-
-  // WPM
-  const tempo = (new Date() - inicio) / 1000;
-  const palavras = valor.trim().split(" ").length;
-  const wpm = Math.round((palavras / tempo) * 60) || 0;
-  wpmEl.innerText = wpm;
-
-  if (valor === textoOriginal) {
-    finalizar();
+  // terminou (mesmo com erro)
+  if (valor.length >= textoOriginal.length) {
+    finalizar(valor);
   }
-
 });
 
-function atualizarTempo() {
-  const tempo = (new Date() - inicio) / 1000;
-  tempoEl.innerText = tempo.toFixed(1);
-}
+function finalizar(valor) {
+  const fim = new Date();
+  const tempo = (fim - inicio) / 1000;
 
-function finalizar() {
-  clearInterval(intervalo);
+  const totalCaracteres = textoOriginal.length;
+  const acertos = totalCaracteres - erros;
+  const precisao = (acertos / totalCaracteres) * 100;
 
-  const tempoFinal = tempoEl.innerText;
-  const wpmFinal = wpmEl.innerText;
-  const precisaoFinal = precisaoEl.innerText;
+  const palavras = textoOriginal.split(" ").length;
+  const wpm = Math.round((palavras / tempo) * 60);
 
   resultado.innerHTML = `
     🎉 Finalizado! <br><br>
-    ⏱️ ${tempoFinal}s <br>
-    ⚡ ${wpmFinal} WPM <br>
-    🎯 ${precisaoFinal}% precisão <br><br>
-    💙 você digitou tudo... mas será que sentiu também?
+    ⏱️ Tempo: ${tempo.toFixed(2)}s <br>
+    ⚡ Velocidade: ${wpm} WPM <br>
+    ❌ Erros: ${erros} <br>
+    🎯 Precisão: ${precisao.toFixed(1)}% <br><br>
+    💙 você terminou... mesmo com erros 😏
   `;
+
+  input.disabled = true;
 }
 </script>
 

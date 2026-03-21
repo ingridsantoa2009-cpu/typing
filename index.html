@@ -22,7 +22,7 @@ body {
   font-weight: 600;
 }
 
-/* caixa do texto */
+/* container geral */
 #container {
   background: #e5e7eb;
   padding: 40px;
@@ -31,11 +31,14 @@ body {
   margin: 40px auto 20px auto;
   font-size: 32px;
   font-family: monospace;
-  line-height: 2.2;
+}
 
-  /* linhas perfeitas */
-  background-image: linear-gradient(#d1d5db 1px, transparent 1px);
-  background-size: 100% 2.2em;
+/* LINHAS (isso resolve tudo) */
+.linha {
+  border-bottom: 1px solid #d1d5db;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+  line-height: 2.2;
 }
 
 /* letras */
@@ -101,20 +104,50 @@ const resultado = document.getElementById("resultado");
 
 let inicio = null;
 
-// criar letras
-textoOriginal.split("").forEach((letra, index) => {
-  const span = document.createElement("span");
-  span.innerText = letra;
-  span.classList.add("letra");
+// 👉 QUEBRA EM LINHAS
+function dividirLinhas(texto, tamanho = 50) {
+  const palavras = texto.split(" ");
+  let linhas = [];
+  let atual = "";
 
-  if (index === 0) span.classList.add("ativa");
+  palavras.forEach(p => {
+    if ((atual + p).length > tamanho) {
+      linhas.push(atual);
+      atual = p + " ";
+    } else {
+      atual += p + " ";
+    }
+  });
 
-  textoDiv.appendChild(span);
+  linhas.push(atual);
+  return linhas;
+}
+
+// criar linhas + letras
+const linhas = dividirLinhas(textoOriginal);
+
+linhas.forEach((linhaTexto, linhaIndex) => {
+  const divLinha = document.createElement("div");
+  divLinha.classList.add("linha");
+
+  linhaTexto.split("").forEach((letra, index) => {
+    const span = document.createElement("span");
+    span.innerText = letra;
+    span.classList.add("letra");
+
+    if (linhaIndex === 0 && index === 0) {
+      span.classList.add("ativa");
+    }
+
+    divLinha.appendChild(span);
+  });
+
+  textoDiv.appendChild(divLinha);
 });
 
 const letras = document.querySelectorAll(".letra");
 
-// focar ao clicar
+// focar
 document.body.addEventListener("click", () => input.focus());
 
 input.addEventListener("input", () => {
@@ -155,14 +188,14 @@ function finalizar(valor) {
   const tempo = (fim - inicio) / 1000;
 
   let erros = 0;
-  let caracteresCorretos = 0;
+  let corretos = 0;
 
-  letras.forEach((span) => {
+  letras.forEach(span => {
     if (span.classList.contains("errada")) erros++;
-    if (span.classList.contains("correta")) caracteresCorretos++;
+    if (span.classList.contains("correta")) corretos++;
   });
 
-  const wpm = Math.round(((caracteresCorretos / 5) / tempo) * 60);
+  const wpm = Math.round(((corretos / 5) / tempo) * 60);
 
   resultado.style.display = "block";
 

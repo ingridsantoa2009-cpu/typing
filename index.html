@@ -6,39 +6,49 @@
 
 <style>
 body {
-  background: #ffffff; /* fundo branco */
+  background: #ffffff;
   color: #333;
   font-family: monospace;
-  padding: 40px;
+  margin: 0;
+}
+
+/* barra superior */
+#topo {
+  background: #bfdbfe;
+  color: #1e3a8a;
+  text-align: center;
+  padding: 15px;
+  font-size: 18px;
+  font-weight: bold;
 }
 
 /* caixa do texto */
 #container {
-  background: #f3f3f3;
-  padding: 40px; /* aumentei */
+  background: #e5e7eb;
+  padding: 40px;
   border-radius: 15px;
-  max-width: 1000px; /* maior */
-  margin: auto;
-  line-height: 2.2; /* mais espaçamento */
-  font-size: 32px; /* letras maiores */
+  max-width: 1000px;
+  margin: 40px auto 20px auto;
+  line-height: 2.2;
+  font-size: 32px;
 }
 
 /* letras */
 .letra {
   color: #999;
-  margin-right: 2px; /* espaço entre letras */
+  margin-right: 2px;
 }
 
 .correta {
-  color: #3b82f6; /* azul */
+  color: #3b82f6;
 }
 
 .errada {
-  color: #ef4444; /* vermelho */
+  color: #ef4444;
 }
 
 .ativa {
-  border-bottom: 2px solid #3b82f6; /* NÃO ALTERADO */
+  border-bottom: 2px solid #3b82f6;
 }
 
 /* input invisível */
@@ -47,17 +57,27 @@ body {
   position: absolute;
 }
 
-/* resultado */
+/* relatório */
 #resultado {
-  text-align: center;
-  margin-top: 30px;
-  font-size: 24px; /* maior */
+  background: #bfdbfe;
+  color: #1e3a8a;
+  padding: 25px;
+  border-radius: 15px;
+  max-width: 600px;
+  margin: 20px auto;
+  font-size: 20px;
+  line-height: 1.8;
+  display: none;
 }
 </style>
 
 </head>
 
 <body>
+
+<div id="topo">
+SEJA BEM VINDO À MAIS UMA TENTATIVA DE FAZER O TÉO SE SENTIR ESPECIAL!
+</div>
 
 <div id="container">
   <div id="texto"></div>
@@ -68,14 +88,13 @@ body {
 <div id="resultado"></div>
 
 <script>
-const textoOriginal = `Hoje é um dia lindo. Eu gosto de programar e aprender coisas novas. Esse site está ficando muito legal!`;
+const textoOriginal = `Hoje é um dia lindo. Eu gosto de estudar e aprender coisas novas. Esse site está ficando muito legal!`;
 
 const textoDiv = document.getElementById("texto");
 const input = document.getElementById("input");
 const resultado = document.getElementById("resultado");
 
 let inicio = null;
-let erros = 0;
 
 // criar letras
 textoOriginal.split("").forEach((letra, index) => {
@@ -90,7 +109,7 @@ textoOriginal.split("").forEach((letra, index) => {
 
 const letras = document.querySelectorAll(".letra");
 
-// focar automaticamente
+// focar ao clicar
 document.body.addEventListener("click", () => input.focus());
 
 input.addEventListener("input", () => {
@@ -98,24 +117,22 @@ input.addEventListener("input", () => {
   if (!inicio) inicio = new Date();
 
   const valor = input.value;
-  erros = 0;
 
   letras.forEach((span, index) => {
-    const letraDigitada = valor[index];
+    const digitado = valor[index];
 
     span.classList.remove("ativa");
 
-    if (letraDigitada == null) {
+    if (digitado == null) {
       span.classList.remove("correta", "errada");
     } 
-    else if (letraDigitada === span.innerText) {
+    else if (digitado === span.innerText) {
       span.classList.add("correta");
       span.classList.remove("errada");
     } 
     else {
       span.classList.add("errada");
       span.classList.remove("correta");
-      erros++;
     }
 
     if (index === valor.length) {
@@ -123,7 +140,6 @@ input.addEventListener("input", () => {
     }
   });
 
-  // terminou (mesmo com erro)
   if (valor.length >= textoOriginal.length) {
     finalizar(valor);
   }
@@ -133,20 +149,32 @@ function finalizar(valor) {
   const fim = new Date();
   const tempo = (fim - inicio) / 1000;
 
-  const totalCaracteres = textoOriginal.length;
-  const acertos = totalCaracteres - erros;
-  const precisao = (acertos / totalCaracteres) * 100;
+  let erros = 0;
+  let caracteresCorretos = 0;
+  let listaErros = [];
 
-  const palavras = textoOriginal.split(" ").length;
-  const wpm = Math.round((palavras / tempo) * 60);
+  letras.forEach((span, index) => {
+    if (span.classList.contains("errada")) {
+      erros++;
+      listaErros.push(`"${textoOriginal[index]}"`);
+    }
+    if (span.classList.contains("correta")) {
+      caracteresCorretos++;
+    }
+  });
+
+  // velocidade REAL (padrão profissional)
+  const wpm = Math.round(((caracteresCorretos / 5) / tempo) * 60);
+
+  resultado.style.display = "block";
 
   resultado.innerHTML = `
-    🎉 Finalizado! <br><br>
+    🎉 <b>RESULTADO</b><br><br>
     ⏱️ Tempo: ${tempo.toFixed(2)}s <br>
-    ⚡ Velocidade: ${wpm} WPM <br>
-    ❌ Erros: ${erros} <br>
-    🎯 Precisão: ${precisao.toFixed(1)}% <br><br>
-    💙 você terminou... mesmo com erros 😏
+    ⚡ Velocidade média: ${wpm} WPM <br>
+    ❌ Total de erros: ${erros} <br>
+    🔎 Caracteres errados: ${listaErros.join(", ") || "Nenhum 😎"} <br><br>
+    💙 você terminou... do seu jeito 😏
   `;
 
   input.disabled = true;

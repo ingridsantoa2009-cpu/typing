@@ -22,7 +22,7 @@ body {
   font-weight: 600;
 }
 
-/* container */
+/* ✅ container corrigido */
 #container {
   position: relative;
   background: #e5e7eb;
@@ -34,10 +34,12 @@ body {
   font-size: 37px;
   font-family: monospace;
   line-height: 2.2;
-  overflow: hidden;
+
+  height: 400px;
+  overflow-y: auto;
 }
 
-/* LINHAS */
+/* linhas */
 #container::after {
   content: "";
   position: absolute;
@@ -166,16 +168,15 @@ input.addEventListener("input", () => {
     }
   });
 
-  // ✅ SCROLL CORRIGIDO (só desce quando precisa)
+  // ✅ scroll suave dentro do container (AGORA FUNCIONA)
   const ativa = document.querySelector(".ativa");
   const container = document.getElementById("container");
 
   if (ativa) {
-    const rect = ativa.getBoundingClientRect();
-    const containerRect = container.getBoundingClientRect();
+    const offsetTop = ativa.offsetTop;
 
-    if (rect.bottom > containerRect.bottom - 20) {
-      ativa.scrollIntoView({ behavior: "smooth", block: "end" });
+    if (offsetTop > container.scrollTop + container.clientHeight - 60) {
+      container.scrollTop = offsetTop - container.clientHeight / 2;
     }
   }
 

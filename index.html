@@ -22,7 +22,7 @@ body {
   font-weight: 600;
 }
 
-/* container (MAIS LARGO) */
+/* container */
 #container {
   position: relative;
   background: #e5e7eb;
@@ -51,7 +51,7 @@ body {
   background-size: 100% 2.2em;
 }
 
-/* texto (CORREÇÃO DE QUEBRA) */
+/* texto */
 #texto {
   position: relative;
   z-index: 1;
@@ -166,10 +166,17 @@ input.addEventListener("input", () => {
     }
   });
 
-  // SCROLL SUAVE (SEM QUEBRAR TUDO)
+  // ✅ SCROLL CORRIGIDO (só desce quando precisa)
   const ativa = document.querySelector(".ativa");
+  const container = document.getElementById("container");
+
   if (ativa) {
-    ativa.scrollIntoView({ behavior: "smooth", block: "center" });
+    const rect = ativa.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+
+    if (rect.bottom > containerRect.bottom - 20) {
+      ativa.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
   }
 
   if (valor.length >= textoOriginal.length) {

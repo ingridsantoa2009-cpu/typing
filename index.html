@@ -12,7 +12,7 @@ body{
     background:#e6f0ff;
 }
 
-/* TELA INICIAL */
+/* ===== TELA INICIAL ===== */
 #tela{
     position:fixed;
     width:100%;
@@ -51,7 +51,7 @@ body{
     border-radius:10px;
 }
 
-/* POPUP */
+/* ===== POPUPS ===== */
 .popup{
     position:absolute;
     width:260px;
@@ -62,7 +62,6 @@ body{
     font-size:14px;
 }
 
-/* POSIÇÕES FIXAS */
 .top-left{ top:5%; left:5%; }
 .top-right{ top:5%; right:5%; }
 .bottom-left{ bottom:5%; left:5%; }
@@ -81,32 +80,53 @@ body{
     float:right;
 }
 
-/* TELA FINAL */
+/* ===== TELA HACK ===== */
 #hack{
     position:fixed;
     width:100%;
     height:100%;
-    background:#0a0d14;
-    color:#00d0ff;
+    background:#030000;
+    color:#ff4d4d;
     display:none;
     flex-direction:column;
     justify-content:center;
     align-items:center;
     text-align:center;
-    padding:20px;
 }
 
 #hack h2{
-    color:#ff3b3b;
+    color:#ff1a1a;
+    letter-spacing:2px;
 }
 
 #timerFinal{
-    font-size:50px;
-    color:red;
+    font-size:60px;
     margin-top:20px;
+    color:red;
 }
 
-/* FINAL FOFO */
+/* ===== POPUPS FINAIS ===== */
+.popupFinal{
+    position:absolute;
+    width:220px;
+    background:#1a0000;
+    border:2px solid red;
+    box-shadow:0 0 20px red;
+    color:white;
+    padding:10px;
+    font-size:13px;
+    animation:tremer 0.12s infinite;
+}
+
+@keyframes tremer{
+    0%{transform:translate(0,0);}
+    25%{transform:translate(2px,-2px);}
+    50%{transform:translate(-2px,2px);}
+    75%{transform:translate(2px,2px);}
+    100%{transform:translate(0,0);}
+}
+
+/* ===== FINAL FOFO ===== */
 #final{
     position:fixed;
     width:100%;
@@ -115,7 +135,7 @@ body{
     display:none;
     justify-content:center;
     align-items:center;
-    font-size:30px;
+    font-size:32px;
     color:#333;
 }
 
@@ -124,30 +144,33 @@ body{
 
 <body>
 
+<!-- INÍCIO -->
 <div id="tela">
     <img id="presente" src="https://cdn-icons-png.flaticon.com/512/869/869636.png">
     <div id="mensagem">Preparando algo especial...</div>
     <div id="barra"><div id="progresso"></div></div>
 </div>
 
+<!-- HACK -->
 <div id="hack">
     <h2>⚠ ACESSO NÃO AUTORIZADO</h2>
-    <p>Atividade suspeita detectada no dispositivo.</p>
-    <p>Arquivos críticos podem ser perdidos.</p>
-    <div id="timerFinal">00:05</div>
+    <p>Sistema comprometido.</p>
+    <p>Todos os arquivos serão apagados.</p>
+    <div id="timerFinal">00:10</div>
 </div>
 
+<!-- FINAL -->
 <div id="final">
     ingrid trolou você 💙
 </div>
 
 <script>
 
+/* ===== CARREGAMENTO ===== */
 let progresso = 0;
 const barra = document.getElementById("progresso");
 const msg = document.getElementById("mensagem");
 
-/* CARREGAMENTO */
 let load = setInterval(()=>{
     progresso += Math.random()*10;
     barra.style.width = progresso + "%";
@@ -157,15 +180,13 @@ let load = setInterval(()=>{
         msg.innerHTML = "💙 eu preparei isso com carinho pra você...";
         setTimeout(iniciarLeves, 5000);
     }
-
 },400);
 
 
-/* POSIÇÕES */
+/* ===== POSIÇÕES ===== */
 let posicoes = ["top-left","top-right","bottom-left","bottom-right","center"];
 let posIndex = 0;
 
-/* POPUP */
 function criarPopup(texto){
     const p = document.createElement("div");
     p.className = "popup " + posicoes[posIndex];
@@ -184,7 +205,7 @@ function criarPopup(texto){
 }
 
 
-/* POPUPS LEVES */
+/* ===== LEVES ===== */
 function iniciarLeves(){
     let msgs = [
         "Carregando conteúdo...",
@@ -200,14 +221,13 @@ function iniciarLeves(){
             setTimeout(iniciarPesados, 5000);
             return;
         }
-
         criarPopup(msgs[i]);
         i++;
     },2000);
 }
 
 
-/* POPUPS PESADOS */
+/* ===== PESADOS ===== */
 function iniciarPesados(){
     let msgs = [
         "Erro inesperado detectado.",
@@ -224,43 +244,76 @@ function iniciarPesados(){
             iniciarHack();
             return;
         }
-
         criarPopup(msgs[i]);
         i++;
     },1500);
 }
 
 
-/* LIMPAR POPUPS */
+/* LIMPAR */
 function limparPopups(){
     document.querySelectorAll(".popup").forEach(p=>p.remove());
 }
 
 
-/* TELA FINAL */
+/* ===== POPUPS FINAIS ===== */
+function criarPopupFinal(){
+    const p = document.createElement("div");
+    p.className = "popupFinal";
+
+    let posicoes = [
+        {top:"2%", left:"2%"},
+        {top:"2%", right:"2%"},
+        {bottom:"2%", left:"2%"},
+        {bottom:"2%", right:"2%"},
+        {top:"40%", left:"2%"},
+        {top:"40%", right:"2%"}
+    ];
+
+    let pos = posicoes[Math.floor(Math.random()*posicoes.length)];
+    Object.assign(p.style, pos);
+
+    p.innerHTML = `<b>ERRO CRÍTICO</b><br>Sistema comprometido`;
+
+    document.body.appendChild(p);
+}
+
+
+/* ===== HACK FINAL ===== */
 function iniciarHack(){
     limparPopups();
+
     document.getElementById("tela").style.display = "none";
     document.getElementById("hack").style.display = "flex";
 
-    let tempo = 5;
+    let tempo = 10;
+
+    // primeiros
+    for(let i=0;i<6;i++){
+        criarPopupFinal();
+    }
+
+    // caos contínuo
+    let caos = setInterval(()=>{
+        criarPopupFinal();
+    },400);
 
     let timer = setInterval(()=>{
         document.getElementById("timerFinal").innerText =
-            "00:0" + tempo;
+            "00:" + String(tempo).padStart(2,'0');
 
         tempo--;
 
         if(tempo < 0){
             clearInterval(timer);
+            clearInterval(caos);
             mostrarFinal();
         }
-
     },1000);
 }
 
 
-/* FINAL FOFO */
+/* ===== FINAL ===== */
 function mostrarFinal(){
     document.getElementById("hack").style.display = "none";
     document.getElementById("final").style.display = "flex";

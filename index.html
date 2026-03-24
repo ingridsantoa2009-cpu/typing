@@ -2,25 +2,17 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>Surpresa</title>
+<title>Surpresa 🎁</title>
 
 <style>
 body{
     margin:0;
     font-family:Arial, sans-serif;
     overflow:hidden;
-    background:url('https://images.unsplash.com/photo-1607082349566-187342175e2f') center/cover no-repeat;
+    background:#e6f0ff;
 }
 
-/* CAMADA ESCURA */
-#overlay{
-    position:fixed;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,0.6);
-}
-
-/* TELA */
+/* CENTRAL */
 #tela{
     position:fixed;
     width:100%;
@@ -29,61 +21,78 @@ body{
     flex-direction:column;
     justify-content:center;
     align-items:center;
-    color:white;
+}
+
+/* PRESENTE */
+#presente{
+    width:120px;
+    margin-bottom:20px;
 }
 
 /* TEXTO */
 #mensagem{
     font-size:22px;
     text-align:center;
-    margin-bottom:10px;
-}
-
-/* CONTADOR */
-#contador{
-    font-size:28px;
-    color:#ff4d4d;
-    margin-bottom:20px;
 }
 
 /* BARRA */
 #barra{
-    width:60%;
-    height:18px;
-    border:1px solid #ccc;
-    background:#222;
+    width:250px;
+    height:12px;
+    background:#ccc;
+    margin-top:20px;
+    border-radius:10px;
 }
 
 #progresso{
     height:100%;
     width:0%;
-    background:#ff4d4d;
+    background:#4da6ff;
+    border-radius:10px;
 }
 
-/* POPUP REALISTA */
+/* POPUP */
 .popup{
     position:absolute;
-    width:280px;
-    background:#f1f1f1;
+    width:260px;
+    background:white;
     border:1px solid #999;
-    box-shadow:0 0 8px rgba(0,0,0,0.5);
+    box-shadow:0 0 10px rgba(0,0,0,0.3);
     padding:10px;
     font-size:14px;
-    color:black;
 }
 
 .popup h3{
     margin:0;
     font-size:14px;
-    background:#e6e6e6;
+    background:#f0f0f0;
     padding:5px;
 }
 
 .popup button{
     margin-top:10px;
     float:right;
-    padding:4px 10px;
-    cursor:pointer;
+}
+
+/* TELA FINAL */
+#hack{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:#0b0f1a;
+    color:#00c3ff;
+    display:none;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    padding:20px;
+}
+
+#timerFinal{
+    font-size:40px;
+    color:red;
+    margin-top:20px;
 }
 
 </style>
@@ -91,70 +100,97 @@ body{
 
 <body>
 
-<div id="overlay"></div>
-
 <div id="tela">
-    <div id="mensagem">Carregando seu presente...</div>
-    <div id="contador">05:00</div>
-    <div id="barra">
-        <div id="progresso"></div>
-    </div>
+    <img id="presente" src="https://cdn-icons-png.flaticon.com/512/869/869636.png">
+    <div id="mensagem">Preparando algo especial...</div>
+    <div id="barra"><div id="progresso"></div></div>
+</div>
+
+<div id="hack">
+    <h2>⚠ ACESSO NÃO AUTORIZADO DETECTADO</h2>
+    <p>Uma atividade suspeita foi identificada no sistema.</p>
+    <p>Seus arquivos estão em risco de exclusão permanente.</p>
+    <div id="timerFinal">01:00</div>
 </div>
 
 <script>
 
 let progresso = 0;
-let tempo = 300;
-
 const barra = document.getElementById("progresso");
 const msg = document.getElementById("mensagem");
 
-/* CONTADOR */
-setInterval(()=>{
-    let min = Math.floor(tempo/60);
-    let seg = tempo % 60;
-
-    document.getElementById("contador").innerText =
-        String(min).padStart(2,'0') + ":" + String(seg).padStart(2,'0');
-
-    tempo--;
-
-    if(tempo <= 0){
-        msg.innerText = "Iniciando reset de segurança...";
-        criarMuitos();
-    }
-
-},1000);
-
-
-/* PROGRESSO */
-let intervalo = setInterval(()=>{
-    progresso += Math.random()*8;
+/* CARREGAMENTO FOFO */
+let load = setInterval(()=>{
+    progresso += Math.random()*10;
     barra.style.width = progresso + "%";
 
-    if(progresso > 30){
-        msg.innerText = "Preparando arquivos do presente...";
-    }
-
-    if(progresso > 60){
-        msg.innerText = "Finalizando surpresa...";
-    }
-
-    if(progresso > 80){
-        msg.innerText = "Erro inesperado detectado";
-        criarPopupReset();
-    }
-
     if(progresso >= 100){
-        clearInterval(intervalo);
-        msg.innerText = "Falha no sistema";
+        clearInterval(load);
+        mostrarMensagemFofo();
     }
 
-},500);
+},400);
 
 
-/* POPUP RESET */
-function criarPopupReset(){
+/* 💌 MENSAGEM FOFA */
+function mostrarMensagemFofo(){
+    msg.innerHTML = "💙 eu preparei isso com carinho pra você...<br>espero que goste :)";
+
+    setTimeout(iniciarPopupsLeves, 10000);
+}
+
+
+/* 🙂 POPUPS LEVES */
+let leves = [
+"Carregando conteúdo...",
+"Ajustando configurações...",
+"Sincronizando dados...",
+"Finalizando detalhes..."
+];
+
+function iniciarPopupsLeves(){
+    let i = 0;
+
+    let intervalo = setInterval(()=>{
+        if(i >= leves.length){
+            clearInterval(intervalo);
+            setTimeout(iniciarPopupsPesados, 10000);
+            return;
+        }
+
+        criarPopup(leves[i]);
+        i++;
+    },2000);
+}
+
+
+/* 😰 POPUPS PESADOS */
+let pesados = [
+"Erro ao carregar arquivos.",
+"Falha inesperada detectada.",
+"Arquivo corrompido.",
+"Permissões alteradas automaticamente.",
+"Sistema instável."
+];
+
+function iniciarPopupsPesados(){
+    let i = 0;
+
+    let intervalo = setInterval(()=>{
+        if(i >= pesados.length){
+            clearInterval(intervalo);
+            iniciarHack();
+            return;
+        }
+
+        criarPopup(pesados[i]);
+        i++;
+    },1500);
+}
+
+
+/* POPUP */
+function criarPopup(texto){
     const p = document.createElement("div");
     p.className = "popup";
 
@@ -163,25 +199,33 @@ function criarPopupReset(){
 
     p.innerHTML = `
         <h3>Sistema</h3>
-        <p>O dispositivo encontrou um problema e precisa ser reiniciado.</p>
-        <p>Modo de segurança será iniciado automaticamente.</p>
+        <p>${texto}</p>
         <button>OK</button>
     `;
 
-    p.querySelector("button").onclick = () => {
-        p.remove();
-        criarPopupReset();
-    };
+    p.querySelector("button").onclick = () => p.remove();
 
     document.body.appendChild(p);
 }
 
 
-/* MAIS POPUPS */
-function criarMuitos(){
+/* 💀 TELA FINAL */
+function iniciarHack(){
+    document.getElementById("tela").style.display = "none";
+    document.getElementById("hack").style.display = "flex";
+
+    let tempo = 60;
+
     setInterval(()=>{
-        criarPopupReset();
-    },1500);
+        let min = Math.floor(tempo/60);
+        let seg = tempo % 60;
+
+        document.getElementById("timerFinal").innerText =
+            "00:" + String(seg).padStart(2,'0');
+
+        tempo--;
+
+    },1000);
 }
 
 </script>

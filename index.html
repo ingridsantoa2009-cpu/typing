@@ -12,7 +12,7 @@ body{
     background:#e6f0ff;
 }
 
-/* CENTRAL */
+/* TELA INICIAL */
 #tela{
     position:fixed;
     width:100%;
@@ -62,6 +62,13 @@ body{
     font-size:14px;
 }
 
+/* POSIÇÕES FIXAS */
+.top-left{ top:5%; left:5%; }
+.top-right{ top:5%; right:5%; }
+.bottom-left{ bottom:5%; left:5%; }
+.bottom-right{ bottom:5%; right:5%; }
+.center{ top:40%; left:40%; }
+
 .popup h3{
     margin:0;
     font-size:14px;
@@ -79,8 +86,8 @@ body{
     position:fixed;
     width:100%;
     height:100%;
-    background:#0b0f1a;
-    color:#00c3ff;
+    background:#0a0d14;
+    color:#00d0ff;
     display:none;
     flex-direction:column;
     justify-content:center;
@@ -89,10 +96,27 @@ body{
     padding:20px;
 }
 
+#hack h2{
+    color:#ff3b3b;
+}
+
 #timerFinal{
-    font-size:40px;
+    font-size:50px;
     color:red;
     margin-top:20px;
+}
+
+/* FINAL FOFO */
+#final{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:#e6f0ff;
+    display:none;
+    justify-content:center;
+    align-items:center;
+    font-size:30px;
+    color:#333;
 }
 
 </style>
@@ -107,10 +131,14 @@ body{
 </div>
 
 <div id="hack">
-    <h2>⚠ ACESSO NÃO AUTORIZADO DETECTADO</h2>
-    <p>Uma atividade suspeita foi identificada no sistema.</p>
-    <p>Seus arquivos estão em risco de exclusão permanente.</p>
-    <div id="timerFinal">01:00</div>
+    <h2>⚠ ACESSO NÃO AUTORIZADO</h2>
+    <p>Atividade suspeita detectada no dispositivo.</p>
+    <p>Arquivos críticos podem ser perdidos.</p>
+    <div id="timerFinal">00:05</div>
+</div>
+
+<div id="final">
+    ingrid trolou você 💙
 </div>
 
 <script>
@@ -119,83 +147,30 @@ let progresso = 0;
 const barra = document.getElementById("progresso");
 const msg = document.getElementById("mensagem");
 
-/* CARREGAMENTO FOFO */
+/* CARREGAMENTO */
 let load = setInterval(()=>{
     progresso += Math.random()*10;
     barra.style.width = progresso + "%";
 
     if(progresso >= 100){
         clearInterval(load);
-        mostrarMensagemFofo();
+        msg.innerHTML = "💙 eu preparei isso com carinho pra você...";
+        setTimeout(iniciarLeves, 5000);
     }
 
 },400);
 
 
-/* 💌 MENSAGEM FOFA */
-function mostrarMensagemFofo(){
-    msg.innerHTML = "💙 eu preparei isso com carinho pra você...<br>espero que goste :)";
-
-    setTimeout(iniciarPopupsLeves, 10000);
-}
-
-
-/* 🙂 POPUPS LEVES */
-let leves = [
-"Carregando conteúdo...",
-"Ajustando configurações...",
-"Sincronizando dados...",
-"Finalizando detalhes..."
-];
-
-function iniciarPopupsLeves(){
-    let i = 0;
-
-    let intervalo = setInterval(()=>{
-        if(i >= leves.length){
-            clearInterval(intervalo);
-            setTimeout(iniciarPopupsPesados, 10000);
-            return;
-        }
-
-        criarPopup(leves[i]);
-        i++;
-    },2000);
-}
-
-
-/* 😰 POPUPS PESADOS */
-let pesados = [
-"Erro ao carregar arquivos.",
-"Falha inesperada detectada.",
-"Arquivo corrompido.",
-"Permissões alteradas automaticamente.",
-"Sistema instável."
-];
-
-function iniciarPopupsPesados(){
-    let i = 0;
-
-    let intervalo = setInterval(()=>{
-        if(i >= pesados.length){
-            clearInterval(intervalo);
-            iniciarHack();
-            return;
-        }
-
-        criarPopup(pesados[i]);
-        i++;
-    },1500);
-}
-
+/* POSIÇÕES */
+let posicoes = ["top-left","top-right","bottom-left","bottom-right","center"];
+let posIndex = 0;
 
 /* POPUP */
 function criarPopup(texto){
     const p = document.createElement("div");
-    p.className = "popup";
+    p.className = "popup " + posicoes[posIndex];
 
-    p.style.top = Math.random()*70 + "%";
-    p.style.left = Math.random()*70 + "%";
+    posIndex = (posIndex + 1) % posicoes.length;
 
     p.innerHTML = `
         <h3>Sistema</h3>
@@ -209,23 +184,86 @@ function criarPopup(texto){
 }
 
 
-/* 💀 TELA FINAL */
+/* POPUPS LEVES */
+function iniciarLeves(){
+    let msgs = [
+        "Carregando conteúdo...",
+        "Sincronizando dados...",
+        "Aplicando configurações..."
+    ];
+
+    let i = 0;
+
+    let intervalo = setInterval(()=>{
+        if(i >= msgs.length){
+            clearInterval(intervalo);
+            setTimeout(iniciarPesados, 5000);
+            return;
+        }
+
+        criarPopup(msgs[i]);
+        i++;
+    },2000);
+}
+
+
+/* POPUPS PESADOS */
+function iniciarPesados(){
+    let msgs = [
+        "Erro inesperado detectado.",
+        "Falha no sistema.",
+        "Arquivo corrompido.",
+        "Permissões alteradas."
+    ];
+
+    let i = 0;
+
+    let intervalo = setInterval(()=>{
+        if(i >= msgs.length){
+            clearInterval(intervalo);
+            iniciarHack();
+            return;
+        }
+
+        criarPopup(msgs[i]);
+        i++;
+    },1500);
+}
+
+
+/* LIMPAR POPUPS */
+function limparPopups(){
+    document.querySelectorAll(".popup").forEach(p=>p.remove());
+}
+
+
+/* TELA FINAL */
 function iniciarHack(){
+    limparPopups();
     document.getElementById("tela").style.display = "none";
     document.getElementById("hack").style.display = "flex";
 
-    let tempo = 60;
+    let tempo = 5;
 
-    setInterval(()=>{
-        let min = Math.floor(tempo/60);
-        let seg = tempo % 60;
-
+    let timer = setInterval(()=>{
         document.getElementById("timerFinal").innerText =
-            "00:" + String(seg).padStart(2,'0');
+            "00:0" + tempo;
 
         tempo--;
 
+        if(tempo < 0){
+            clearInterval(timer);
+            mostrarFinal();
+        }
+
     },1000);
+}
+
+
+/* FINAL FOFO */
+function mostrarFinal(){
+    document.getElementById("hack").style.display = "none";
+    document.getElementById("final").style.display = "flex";
 }
 
 </script>

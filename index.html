@@ -2,215 +2,89 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>Typing da Ingrid 💙</title>
+<title>Erro do Sistema</title>
 
 <style>
-body {
-  background: #ffffff;
-  color: #333;
-  font-family: "Segoe UI", Arial, sans-serif;
-  margin: 0;
+body{
+    margin:0;
+    background:black;
+    font-family:Arial;
+    overflow:hidden;
 }
 
-/* barra topo */
-#topo {
-  background: linear-gradient(to right, #2ea3c9, #1e7fa3);
-  color: white;
-  text-align: center;
-  padding: 15px;
-  font-size: 20px;
-  font-weight: 600;
+/* POPUP */
+.popup{
+    position:absolute;
+    width:220px;
+    background:white;
+    border:2px solid red;
+    box-shadow:0 0 10px red;
+    padding:10px;
+    animation:tremer 0.2s infinite;
 }
 
-/* ✅ container corrigido */
-#container {
-  position: relative;
-  background: #e5e7eb;
-  padding: 40px;
-  border-radius: 15px;
-  max-width: 1400px;
-  width: 90%;
-  margin: 40px auto 20px auto;
-  font-size: 37px;
-  font-family: monospace;
-  line-height: 2.2;
-
-  height: 400px;
-  overflow-y: auto;
+.popup h3{
+    margin:0;
+    font-size:14px;
+    color:red;
 }
 
-/* linhas */
-#container::after {
-  content: "";
-  position: absolute;
-  top: 40px;
-  left: 40px;
-  right: 40px;
-  bottom: 40px;
-  pointer-events: none;
-
-  background-image: linear-gradient(#d1d5db 1px, transparent 1px);
-  background-size: 100% 2.2em;
+.popup button{
+    margin-top:10px;
+    width:100%;
+    cursor:pointer;
 }
 
-/* texto */
-#texto {
-  position: relative;
-  z-index: 1;
-  white-space: pre-wrap;
-  word-break: normal;
-}
-
-/* letras */
-.letra {
-  color: #999;
-}
-
-.correta {
-  color: #3b82f6;
-}
-
-.errada {
-  color: #ef4444;
-}
-
-.ativa {
-  border-bottom: 2px solid #3b82f6;
-}
-
-/* input invisível */
-#input {
-  opacity: 0;
-  position: absolute;
-}
-
-/* resultado */
-#resultado {
-  background: #bfdbfe;
-  color: #1e3a8a;
-  padding: 25px;
-  border-radius: 15px;
-  max-width: 600px;
-  margin: 20px auto;
-  font-size: 20px;
-  line-height: 1.8;
-  display: none;
-  text-align: center;
+/* ANIMAÇÃO DE BUG */
+@keyframes tremer{
+    0%{transform:translate(0px,0px);}
+    25%{transform:translate(2px,-2px);}
+    50%{transform:translate(-2px,2px);}
+    75%{transform:translate(2px,2px);}
+    100%{transform:translate(0px,0px);}
 }
 </style>
-
 </head>
 
 <body>
 
-<div id="topo">
-SEJA BEM VINDO!
-</div>
-
-<div id="container">
-  <div id="texto"></div>
-</div>
-
-<input type="text" id="input" autofocus>
-
-<div id="resultado"></div>
-
 <script>
-const textoOriginal = `Ah, garoto! Você é tão especial pra mim! vamos continuar em inglês pra ser legal... Well, a curiosity... I like you, and I'm in love. You are super kind and cute and adorable. I really like your common and unique features. Your big eyes, your crazy curls, your strange way that always makes me nervous, and your way of being yourself. Man, I like you because, first, I'm selfish and I want your volleyball at my disposal, and second, I saw in you what no one has ever shown me. I saw in you the willingness, not only to say with words, but to show me that you truly like me. I, like you. You are very special to me, and know that you won't be forgotten that easily. I like you.`;
 
-const textoDiv = document.getElementById("texto");
-const input = document.getElementById("input");
-const resultado = document.getElementById("resultado");
+function criarPopup(){
+    const popup = document.createElement("div");
+    popup.className = "popup";
 
-let inicio = null;
+    popup.style.top = Math.random()*80 + "%";
+    popup.style.left = Math.random()*80 + "%";
 
-// criar letras
-textoOriginal.split("").forEach((letra, index) => {
-  const span = document.createElement("span");
-  span.innerText = letra;
-  span.classList.add("letra");
+    popup.innerHTML = `
+        <h3>⚠ ERRO CRÍTICO</h3>
+        <p>Sistema corrompido!</p>
+        <button>Fechar</button>
+    `;
 
-  if (index === 0) span.classList.add("ativa");
+    popup.querySelector("button").onclick = () => {
+        popup.remove();
 
-  textoDiv.appendChild(span);
-});
+        // quando fecha UM... surgem MAIS 😈
+        for(let i=0;i<2;i++){
+            criarPopup();
+        }
+    };
 
-const letras = document.querySelectorAll(".letra");
-
-// focar
-document.body.addEventListener("click", () => input.focus());
-
-input.addEventListener("input", () => {
-
-  if (!inicio) inicio = new Date();
-
-  const valor = input.value;
-
-  letras.forEach((span, index) => {
-    const digitado = valor[index];
-
-    span.classList.remove("ativa");
-
-    if (digitado == null) {
-      span.classList.remove("correta", "errada");
-    } 
-    else if (digitado === span.innerText) {
-      span.classList.add("correta");
-      span.classList.remove("errada");
-    } 
-    else {
-      span.classList.add("errada");
-      span.classList.remove("correta");
-    }
-
-    if (index === valor.length) {
-      span.classList.add("ativa");
-    }
-  });
-
-  // ✅ scroll suave dentro do container (AGORA FUNCIONA)
-  const ativa = document.querySelector(".ativa");
-  const container = document.getElementById("container");
-
-  if (ativa) {
-    const offsetTop = ativa.offsetTop;
-
-    if (offsetTop > container.scrollTop + container.clientHeight - 60) {
-      container.scrollTop = offsetTop - container.clientHeight / 2;
-    }
-  }
-
-  if (valor.length >= textoOriginal.length) {
-    finalizar(valor);
-  }
-});
-
-function finalizar(valor) {
-  const fim = new Date();
-  const tempo = (fim - inicio) / 1000;
-
-  let erros = 0;
-  let corretos = 0;
-
-  letras.forEach(span => {
-    if (span.classList.contains("errada")) erros++;
-    if (span.classList.contains("correta")) corretos++;
-  });
-
-  const wpm = Math.round(((corretos / 5) / tempo) * 60);
-
-  resultado.style.display = "block";
-
-  resultado.innerHTML = `
-    🎉 <b>RESULTADO</b><br><br>
-    ⏱️ Tempo: ${tempo.toFixed(2)}s <br>
-    ⚡ Velocidade média: ${wpm} WPM <br>
-    ❌ Total de erros: ${erros} <br><br>
-    💙 Fui incapaz de colocar os sons de teclas, perdão. E mesmo que a velocidade esteja toda errada, saiba que você entrou em meu heart tão rápido que nenhum contador de wpm conseguiria captar essa velocidade. Te gosto, garoto louco. ❤️
-  `;
-
-  input.disabled = true;
+    document.body.appendChild(popup);
 }
+
+// começa com alguns
+for(let i=0;i<5;i++){
+    criarPopup();
+}
+
+// spawn infinito de bugs
+setInterval(()=>{
+    criarPopup();
+}, 2000);
+
 </script>
 
 </body>
